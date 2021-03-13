@@ -15,7 +15,8 @@ module.exports = {
 
   		const { list } = await fetch(`https://api.urbandictionary.com/v0/define?${query}`).then(response => response.json());
 
-		  if (!list.length) {
+		  if (!list.length) 
+		  	{
 				return message.channel.send(`No results found for **${args.join(' ')}**.`);
 			}
 		
