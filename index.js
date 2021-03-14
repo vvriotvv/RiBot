@@ -2,6 +2,9 @@ require('dotenv').config()
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token } = require('./config.json');
+const verify = require('./commands/Torn/verify');
+const { execute } = require('./commands/utility/avatar');
+const guildMemberAdd = require('./events/guildMemberAdd');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -31,6 +34,10 @@ client.once('ready', () => {
      console.log('Ribot is online!');
      client.user.setPresence({ activity: { name: 'Monitoring Plebs' }, status: 'active' })
  });
+
+client.on("guildMemberAdd", member => {
+  client.channels.cache.get(`750303757027246182`).send(`Welcome to the server ${member.user.tag}`);
+});
 
  client.on('message',  message => {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
