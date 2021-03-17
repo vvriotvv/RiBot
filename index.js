@@ -35,10 +35,6 @@ client.once('ready', () => {
      client.user.setPresence({ activity: { name: 'Monitoring Plebs' }, status: 'active' })
  });
 
-client.on("guildMemberAdd", member => {
-  client.channels.cache.get(`750303757027246182`).send(`Welcome to the server ${member.user.tag}`);
-});
-
  client.on('message',  message => {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
    

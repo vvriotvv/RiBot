@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 module.exports = {
 	name: 'urban',
 	description: 'Urban Dictionary',
+	usage: 'search term',
 	cooldown: 5,
 	async execute(message, args) {
     	const querystring = require('querystring');

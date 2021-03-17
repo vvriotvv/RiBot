@@ -3,7 +3,7 @@ module.exports = {
 	name: 'cat',
 	description: 'Random cat',
 	cooldown: 5,
-	async execute(message, args) {
+	async execute(message) {
     	fetch('https://aws.random.cat/meow').then(response => response.json());
 		const { file } = await fetch('https://aws.random.cat/meow').then(response => response.json());
 

@@ -1,6 +1,7 @@
 module.exports = {
 	name: 'prune',
 	description: 'deletes messages',
+  permissions: 'MANAGE_MESSAGES',
   guildOnly: true,
   cooldown: 5,
 	execute(message, args) {
