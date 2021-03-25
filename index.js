@@ -2,9 +2,8 @@ require('dotenv').config()
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token } = require('./config.json');
-const verify = require('./commands/Torn/verify');
-const { execute } = require('./commands/utility/avatar');
-const guildMemberAdd = require('./events/guildMemberAdd');
+const cron = require('node-cron');
+const { execute } = require('./events/guildMemberAdd');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -12,6 +11,7 @@ const cooldowns = new Discord.Collection();
 const commandFolders = fs.readdirSync('./commands');
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const cronFiles = fs.readdirSync('./crons');
 
 for (const file of eventFiles) {
 	const event = require(`./events/${file}`);
@@ -95,4 +95,9 @@ client.once('ready', () => {
 
    });
 
-   client.login(token);
+   cron.schedule('* * * * *', function() {
+    //console.log('running a task every minute');
+    cronFiles.execute(respect);
+  });
+
+client.login(token);
