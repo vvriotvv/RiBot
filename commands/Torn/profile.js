@@ -39,21 +39,23 @@ module.exports = {
             const profileRequest = `https://api.torn.com/user/${tornID}?selections=profile&key=${api_key}`;
 
             await fetch(profileRequest)
-            .then(res => res.json())
+            //.then(res => res.json())
             .then(res => {
-                  var StatusColor = '#808080';
+                  if(res.ok){
+                  res.json().then((res) => {
+                        var StatusColor = '#808080';
 
-                  if(res.status.color == 'green') {
-                        StatusColor = '#008000';
-                  }
-                  else if(res.status.color == 'blue') {
-                        StatusColor = '#0000FF';
-                  }
-                  else if(res.status.color == 'red') {
-                        StatusColor = '#FF0000';
-                  }
+                        if(res.status.color == 'green') {
+                              StatusColor = '#008000';
+                        }
+                        else if(res.status.color == 'blue') {
+                              StatusColor = '#0000FF';
+                        }
+                        else if(res.status.color == 'red') {
+                              StatusColor = '#FF0000';
+                        }
                   
-                  const embed = new Discord.MessageEmbed()
+                        const embed = new Discord.MessageEmbed()
                         .setColor(StatusColor)
                         .setTitle(`${res.name} [${res.player_id}]`)
                         .setDescription(`Level ${res.level}, ${res.rank} of ${res.faction.faction_name}.`)
@@ -66,11 +68,18 @@ module.exports = {
                         { name: 'Links', value: `[Attack](https://www.torn.com/loader2.php?sid=getInAttack&user2ID=${tornID}) | [Bounty](https://www.torn.com/bounties.php?p=add&XID=${tornID}) | [Mail](https://www.torn.com/messages.php#/p=compose&XID=${tornID}) | [Send Cash](https://www.torn.com/sendcash.php#/XID=${tornID}) | [Trade](https://www.torn.com/trade.php#step=start&userID=${tornID})`},
                         )
                         .setTimestamp()
-                        .setFooter(` ${prefix}profile command`, );
+                        .setFooter(`${prefix}profile command`); 
                         
-                  message.channel.send(embed);
+                        message.channel.send(embed);
+                  });
+                  }else{
+                        console.log("error occured")
+                        message.channel.send("An error occured with your request, please try again later");
+                  }
             })
-
-
-      },
-}; 
+            .catch(error => {
+                  console.log(error);
+            });
+      }
+};
+ 

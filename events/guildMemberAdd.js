@@ -28,8 +28,12 @@ module.exports = {
 		if (!tornID){
 			const embed = new Discord.MessageEmbed()
 				  .setColor('#FF0000')
-				  .setTitle(`Please verify on Torn's official Discord server.`)
-				  .setURL('https://www.torn.com/discord');
+				  .setTitle(`Welcome to the server ${member.user.tag}`)
+				  .addFields(
+                        { name: 'Verification Failed', value: `Please verify on [torns official discord](https://www.torn.com/discord) first`},
+                        { name: 'Re-Verify', value: `Use ".verify" when completed.`},
+						{ name: 'Total Members:', value: `${member.guild.memberCount}`},
+        )
 				  
 			//return member.guild.channels(channel).send(embed)
 			return channel.send(embed);
@@ -63,9 +67,9 @@ module.exports = {
         console.log(`added ${member.user.tag} to ${verifiedRole.name} `);
 
 		if(inFac){
-			return channel.send(`Welcome to the server ${member.user.tag} \nYou have been verified and given the role ${facRole.name} \nTotal members: ${member.guild.memberCount}`)
+			return channel.send(`:white_check_mark: Welcome to the server ${member.user.tag} \nYou have been verified and given the role ${facRole.name} \nTotal members: ${member.guild.memberCount}`)
 		} else {
-			return channel.send(`Welcome to the server ${member.user.tag} \nYou have been verified and given the role ${friendRole.name}  \nTotal members: ${member.guild.memberCount}`)
+			return channel.send(`:white_check_mark: Welcome to the server ${member.user.tag} \nYou have been verified and given the role ${friendRole.name}  \nTotal members: ${member.guild.memberCount}`)
 		}
 		
 	},
