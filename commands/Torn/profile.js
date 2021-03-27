@@ -65,6 +65,8 @@ module.exports = {
 		            { name: 'Status', value: `${res.status.description} ${res.status.details}`, inline: true },
                         { name: 'Faction', value: `${res.faction.position} of [${res.faction.faction_name}](https://www.torn.com/factions.php?step=profile&userID=${tornID}#/) for ${res.faction.days_in_faction} days.`  },
                         { name: 'Company', value: `${res.job.position} of [${res.job.company_name}](https://www.torn.com/joblist.php#/p=corpinfo&userID=${tornID}).` },
+                        { name: 'Awards: ', value: `${res.awards}`, inline: true },
+                        { name: 'Last Action: ', value: `${res.last_action.relative}`, inline: true },
                         { name: 'Links', value: `[Attack](https://www.torn.com/loader2.php?sid=getInAttack&user2ID=${tornID}) | [Bounty](https://www.torn.com/bounties.php?p=add&XID=${tornID}) | [Mail](https://www.torn.com/messages.php#/p=compose&XID=${tornID}) | [Send Cash](https://www.torn.com/sendcash.php#/XID=${tornID}) | [Trade](https://www.torn.com/trade.php#step=start&userID=${tornID})`},
                         )
                         .setTimestamp()
