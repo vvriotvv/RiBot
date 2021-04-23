@@ -5,13 +5,15 @@ const { prefix, token } = require('./config.json');
 const cron = require('node-cron');
 const { execute } = require('./events/guildMemberAdd');
 const faction = require('./functions/faction');
-
+const { nwc } = require('./functions/nwc');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 const commandFolders = fs.readdirSync('./commands');
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+var lastRespect = "0";
+var RespectChange = "0";
 
 for (const file of eventFiles) {
 	const event = require(`./events/${file}`);
@@ -33,6 +35,10 @@ for (const folder of commandFolders) {
 client.once('ready', () => {
      console.log('Ribot is online!');
      client.user.setPresence({ activity: { name: 'Monitoring Plebs' }, status: 'active' })
+     faction.getRespect().then(respect => {
+      respectchange = respect-lastRespect;
+      lastRespect=respect;
+  })
  });
 
  client.on('message',  message => {
@@ -95,8 +101,22 @@ client.once('ready', () => {
 
    });
 
-   cron.schedule('* * * * *', () => {
-    faction.getRespect(client);
+   //const FacAnnouncementsChannel = client.channels.cache.find(channel => channel.id === "495629631513296896");
+
+   cron.schedule('0 0 * * *', () => {
+    faction.getRespect().then(respect => {
+      respectchange = respect-lastRespect;
+      const embed = new Discord.MessageEmbed()
+          .setColor(`#0099ff`)
+          .setTitle(`Riot has ${nwc(respect)} respect, gaining respect ${nwc(respectchange)} today.`)
+          .setDescription(`It's 00:00 TCT - Torn's Reset Time`)
+          .setURL(`https://www.torn.com/factions.php?step=profile&ID=41419#/`) 
+      client.channels.cache.get("495629631513296896").send(embed);
+      lastRespect=respect;
+  })
+   }, {
+    scheduled: true,
+    timezone: "Universal"
   });
 
 client.login(token);
