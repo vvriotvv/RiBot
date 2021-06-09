@@ -1,11 +1,13 @@
 require('dotenv').config()
 const fs = require('fs');
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
+const { prefix, token, dbHost, dbName, dbPassword, dbPort, dbUsername } = require('./config.json');
 const cron = require('node-cron');
 const { execute } = require('./events/guildMemberAdd');
 const faction = require('./functions/faction');
 const { nwc } = require('./functions/nwc');
+const stockmarket = require('./functions/stockmarket');
+const { info } = require('console');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
@@ -14,6 +16,8 @@ const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 var lastRespect = "0";
 var RespectChange = "0";
+var mysql = require('mysql');
+var datetime = new Date();
 
 for (const file of eventFiles) {
 	const event = require(`./events/${file}`);
@@ -31,6 +35,8 @@ for (const folder of commandFolders) {
 		client.commands.set(command.name, command);
 	}
 }
+
+
 
 client.once('ready', () => {
      console.log('Ribot is online!');
@@ -101,8 +107,6 @@ client.once('ready', () => {
 
    });
 
-   //const FacAnnouncementsChannel = client.channels.cache.find(channel => channel.id === "495629631513296896");
-
    cron.schedule('0 0 * * *', () => {
     faction.getRespect().then(respect => {
       respectchange = respect-lastRespect;
@@ -113,6 +117,31 @@ client.once('ready', () => {
           .setURL(`https://www.torn.com/factions.php?step=profile&ID=41419#/`) 
       client.channels.cache.get("495629631513296896").send(embed);
       lastRespect=respect;
+  })
+   }, {
+    scheduled: true,
+    timezone: "Universal"
+  });
+
+  cron.schedule('* * * * *', () => {
+    stockmarket.getInfo().then(Info => {
+      const embed = new Discord.MessageEmbed()
+          .setColor(`#0099ff`)
+          .setTitle(`${Info.stocks[1].name}`)
+          .addFields(
+            { name: 'Current Price', value: `$${nwc(Info.stocks[1].current_price)}`},
+            { name: 'Market Cap', value: `$${nwc(Info.stocks[1].market_cap)}`},
+            { name: 'Total Shares', value: `${nwc(Info.stocks[1].total_shares)}`},
+            )
+      //client.channels.cache.get("814495888243294258").send(embed);
+
+      var sql = `INSERT INTO TSB (Price, MarketCap, TotalShares) VALUES ('${Info.stocks[1].current_price}', '${Info.stocks[1].market_cap}', '${Info.stocks[1].total_shares}');`;
+      sql += `INSERT INTO TCB (Price, MarketCap, TotalShares) VALUES ('${Info.stocks[2].current_price}', '${Info.stocks[2].market_cap}', '${Info.stocks[2].total_shares}');`;
+      con.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log("Result: " + result);
+  });
+
   })
    }, {
     scheduled: true,
